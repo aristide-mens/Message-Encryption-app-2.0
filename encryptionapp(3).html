@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Message Encryption App</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chiffreur de Congruence - Aristide Mens</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0d1b2a, #1b263b, #0d1b2a);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(13, 27, 42, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            margin-top: 20px;
+            border: 1px solid #415a77;
+            position: relative;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #415a77;
+        }
+        
+        .creator-name {
+            color: #ff9e00;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px rgba(255, 158, 0, 0.6);
+            letter-spacing: 2px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin: 10px 0 15px;
+            text-shadow: 0 0 15px rgba(100, 150, 255, 0.5);
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding: 0 20px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: #778da9;
+            margin-bottom: 10px;
+        }
+        
+        .language-selector {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 30, 0.7);
+            border: 1px solid #415a77;
+            border-radius: 20px;
+            padding: 8px 15px;
+            color: #e0e1dd;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .language-selector:hover {
+            background: rgba(65, 90, 119, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .screen {
+            display: none;
+            animation: fadeIn 0.7s ease;
+            padding: 20px 0;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .password-section {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .password-section h2 {
+            margin-bottom: 25px;
+            color: #4facfe;
+            font-size: 1.8rem;
+        }
+        
+        .password-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .password-input input {
+            width: 100%;
+            max-width: 450px;
+            padding: 18px;
+            border-radius: 15px;
+            border: 2px solid rgba(100, 100, 255, 0.3);
+            background: rgba(0, 0, 30, 0.7);
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .password-input input:focus {
+            outline: none;
+            border-color: #00f2fe;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+        }
+        
+        .message-section {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 20px 0;
+        }
+        
+        button {
+            padding: 18px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            box-shadow: 0 5px 20px rgba(0, 114, 255, 0.5);
+            letter-spacing: 1px;
+            min-width: 220px;
+        }
+        
+        button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 114, 255, 0.7);
+        }
+        
+        button:active {
+            transform: translateY(2px);
+        }
+        
+        .decode-btn {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            box-shadow: 0 5px 20px rgba(255, 75, 43, 0.5);
+        }
+        
+        .decode-btn:hover {
+            box-shadow: 0 10px 25px rgba(255, 75, 43, 0.7);
+        }
+        
+        .text-areas {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 160px;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(100, 100, 255, 0.3);
+            background: rgba(0, 0, 30, 0.7);
+            color: white;
+            font-size: 1.2rem;
+            resize: vertical;
+            transition: all 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #00f2fe;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+        }
+        
+        .error-message {
+            color: #ff4b2b;
+            text-align: center;
+            font-weight: bold;
+            margin: 15px 0;
+            min-height: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .info-message {
+            color: #4facfe;
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
+        
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            opacity: 0.7;
+            font-size: 1rem;
+            color: #778da9;
+        }
+        
+        /* Welcome Prompt Styles */
+        .welcome-prompt {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .prompt-content {
+            background: rgba(13, 27, 42, 0.95);
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            border: 2px solid #415a77;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+        
+        .prompt-content h2 {
+            color: #4facfe;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .prompt-content p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #e0e1dd;
+        }
+        
+        .dont-show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .dont-show input {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .dont-show label {
+            font-size: 1.1rem;
+            color: #e0e1dd;
+        }
+        
+        .prompt-ok-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .prompt-ok-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 114, 255, 0.4);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+                padding: 0 20px;
+            }
+            
+            .creator-name {
+                font-size: 2rem;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .language-selector {
+                position: static;
+                margin-bottom: 20px;
+            }
+            
+            .prompt-content {
+                padding: 20px;
+            }
+            
+            .prompt-content h2 {
+                font-size: 1.6rem;
+            }
+            
+            .prompt-content p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Prompt -->
+    <div id="welcomePrompt" class="welcome-prompt">
+        <div class="prompt-content">
+            <h2 id="welcomeTitle">Bienvenue dans le Chiffreur de Congruence</h2>
+            <p id="welcomeMessage">Pour utiliser ce logiciel, commencez par saisir un mot de passe secret à partager avec votre destinataire. Entrez ensuite le message à crypter, copiez le message crypté, puis envoyez-le avec le mot de passe afin que votre destinataire puisse le décrypter.</p>
+            <div class="dont-show">
+                <input type="checkbox" id="dontShowAgain">
+                <label for="dontShowAgain" id="dontShowLabel">Ne plus afficher ce message</label>
+            </div>
+            <button class="prompt-ok-btn" id="promptOkBtn">OK</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <div class="creator-name">ARISTIDE MENS</div>
+            <h1 id="appTitle">Chiffreur de Congruence</h1>
+            <p class="subtitle" id="appSubtitle">Système de chiffrement affine par congruence</p>
+            <select id="languageSelector" class="language-selector">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="de">Deutsch</option>
+                <option value="it">Italiano</option>
+            </select>
+        </header>
+        
+        <!-- Écran du mot de passe -->
+        <div id="passwordScreen" class="screen active">
+            <div class="password-section">
+                <h2 id="passwordPrompt">Entrez votre mot de passe secret</h2>
+                <div class="password-input">
+                    <input type="password" id="password" placeholder="Mot de passe..." autocomplete="off">
+                    <button id="validatePassword">Valider</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Écran du message -->
+        <div id="messageScreen" class="screen">
+            <div class="message-section">
+                <div class="text-areas">
+                    <textarea id="inputText" placeholder="Entrez votre texte ici..."></textarea>
+                    
+                    <div class="action-buttons">
+                        <button id="encodeBtn" class="encode-btn">Coder le message</button>
+                        <button id="decodeBtn" class="decode-btn">Décoder le message</button>
+                    </div>
+                    
+                    <div class="error-message" id="errorMessage"></div>
+                    
+                    <textarea id="outputText" placeholder="Le résultat apparaîtra ici..." readonly></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p id="footerText">Système de chiffrement par Aristide Mens</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Éléments DOM
+            const welcomePrompt = document.getElementById('welcomePrompt');
+            const dontShowCheckbox = document.getElementById('dontShowAgain');
+            const promptOkBtn = document.getElementById('promptOkBtn');
+            const passwordScreen = document.getElementById('passwordScreen');
+            const messageScreen = document.getElementById('messageScreen');
+            const passwordInput = document.getElementById('password');
+            const validateBtn = document.getElementById('validatePassword');
+            const encodeBtn = document.getElementById('encodeBtn');
+            const decodeBtn = document.getElementById('decodeBtn');
+            const inputText = document.getElementById('inputText');
+            const outputText = document.getElementById('outputText');
+            const errorMessage = document.getElementById('errorMessage');
+            const languageSelector = document.getElementById('languageSelector');
+            
+            // Variables globales
+            let a = 0, b = 0;
+            let password = "";
+            let currentLanguage = 'fr';
+            
+            // Vérifier si l'utilisateur a déjà choisi de ne plus afficher le prompt
+            if (localStorage.getItem('dontShowWelcome') === 'true') {
+                welcomePrompt.style.display = 'none';
+            }
+            
+            // Fermer le prompt d'accueil
+            promptOkBtn.addEventListener('click', function() {
+                if (dontShowCheckbox.checked) {
+                    localStorage.setItem('dontShowWelcome', 'true');
+                }
+                welcomePrompt.style.display = 'none';
+            });
+            
+            // Textes multilingues
+            const translations = {
+                fr: {
+                    appTitle: "Chiffreur de Congruence",
+                    appSubtitle: "Système de chiffrement affine par congruence",
+                    passwordPrompt: "Entrez votre mot de passe secret",
+                    passwordPlaceholder: "Mot de passe...",
+                    validateButton: "Valider",
+                    inputPlaceholder: "Entrez votre texte ici...",
+                    encodeButton: "Coder le message",
+                    decodeButton: "Décoder le message",
+                    outputPlaceholder: "Le résultat apparaîtra ici...",
+                    footerText: "Système de chiffrement par Aristide Mens",
+                    errorEmptyPassword: "Veuillez entrer un mot de passe",
+                    errorNotInvertible: "Erreur: Le coefficient a doit être inversible modulo 26 pour le décodage",
+                    welcomeTitle: "Bienvenue dans le Chiffreur de Congruence",
+                    welcomeMessage: "Pour utiliser ce logiciel, commencez par saisir un mot de passe secret à partager avec votre destinataire. Entrez ensuite le message à crypter, copiez le message crypté, puis envoyez-le avec le mot de passe afin que votre destinataire puisse le décrypter.",
+                    dontShowLabel: "Ne plus afficher ce message"
+                },
+                en: {
+                    appTitle: "Congruence Encoder",
+                    appSubtitle: "Affine encryption system by congruence",
+                    passwordPrompt: "Enter your secret password",
+                    passwordPlaceholder: "Password...",
+                    validateButton: "Validate",
+                    inputPlaceholder: "Enter your text here...",
+                    encodeButton: "Encode message",
+                    decodeButton: "Decode message",
+                    outputPlaceholder: "Result will appear here...",
+                    footerText: "Encryption system by Aristide Mens",
+                    errorEmptyPassword: "Please enter a password",
+                    errorNotInvertible: "Error: Coefficient a must be invertible modulo 26 for decoding",
+                    welcomeTitle: "Welcome to Congruence Encoder",
+                    welcomeMessage: "To use this software, start by entering a secret password to share with your recipient. Then enter the message to encrypt, copy the encrypted message, and send it with the password so your recipient can decrypt it.",
+                    dontShowLabel: "Don't show this message again"
+                },
+                es: {
+                    appTitle: "Codificador de Congruencia",
+                    appSubtitle: "Sistema de cifrado afín por congruencia",
+                    passwordPrompt: "Ingrese su contraseña secreta",
+                    passwordPlaceholder: "Contraseña...",
+                    validateButton: "Validar",
+                    inputPlaceholder: "Ingrese su texto aquí...",
+                    encodeButton: "Codificar mensaje",
+                    decodeButton: "Decodificar mensaje",
+                    outputPlaceholder: "El resultado aparecerá aquí...",
+                    footerText: "Sistema de cifrado por Aristide Mens",
+                    errorEmptyPassword: "Por favor ingrese una contraseña",
+                    errorNotInvertible: "Error: El coeficiente a debe ser invertible módulo 26 para decodificar",
+                    welcomeTitle: "Bienvenido al Codificador de Congruencia",
+                    welcomeMessage: "Para usar este software, comience ingresando una contraseña secreta para compartir con su destinatario. Luego ingrese el mensaje a cifrar, copie el mensaje cifrado y envíelo con la contraseña para que su destinatario pueda descifrarlo.",
+                    dontShowLabel: "No mostrar este mensaje de nuevo"
+                },
+                de: {
+                    appTitle: "Kongruenz Encoder",
+                    appSubtitle: "Affines Verschlüsselungssystem durch Kongruenz",
+                    passwordPrompt: "Geben Sie Ihr geheimes Passwort ein",
+                    passwordPlaceholder: "Passwort...",
+                    validateButton: "Bestätigen",
+                    inputPlaceholder: "Geben Sie Ihren Text hier ein...",
+                    encodeButton: "Nachricht verschlüsseln",
+                    decodeButton: "Nachricht entschlüsseln",
+                    outputPlaceholder: "Ergebnis wird hier angezeigt...",
+                    footerText: "Verschlüsselungssystem von Aristide Mens",
+                    errorEmptyPassword: "Bitte geben Sie ein Passwort ein",
+                    errorNotInvertible: "Fehler: Koeffizient a muss modulo 26 invertierbar sein, um zu decodieren",
+                    welcomeTitle: "Willkommen beim Kongruenz Encoder",
+                    welcomeMessage: "Um diese Software zu verwenden, geben Sie zunächst ein geheimes Passwort ein, das Sie mit Ihrem Empfänger teilen. Geben Sie dann die zu verschlüsselnde Nachricht ein, kopieren Sie die verschlüsselte Nachricht und senden Sie sie mit dem Passwort, damit Ihr Empfänger sie entschlüsseln kann.",
+                    dontShowLabel: "Diese Meldung nicht mehr anzeigen"
+                },
+                it: {
+                    appTitle: "Codificatore di Congruenza",
+                    appSubtitle: "Sistema di cifratura affine per congruenza",
+                    passwordPrompt: "Inserisci la tua password segreta",
+                    passwordPlaceholder: "Password...",
+                    validateButton: "Convalida",
+                    inputPlaceholder: "Inserisci il tuo testo qui...",
+                    encodeButton: "Codifica messaggio",
+                    decodeButton: "Decodifica messaggio",
+                    outputPlaceholder: "Il risultato apparirà qui...",
+                    footerText: "Sistema di cifratura di Aristide Mens",
+                    errorEmptyPassword: "Si prega di inserire una password",
+                    errorNotInvertible: "Errore: Il coefficiente a deve essere invertibile modulo 26 per la decodifica",
+                    welcomeTitle: "Benvenuto nel Codificatore di Congruenza",
+                    welcomeMessage: "Per utilizzare questo software, inizia inserendo una password segreta da condividere con il destinatario. Quindi inserisci il messaggio da crittografare, copia il messaggio crittografato e invialo con la password in modo che il destinatario possa decrittografarlo.",
+                    dontShowLabel: "Non mostrare più questo messaggio"
+                }
+            };
+            
+            // Fonction pour mettre à jour l'interface avec la langue sélectionnée
+            function updateLanguage() {
+                const lang = currentLanguage;
+                const t = translations[lang];
+                
+                document.getElementById('appTitle').textContent = t.appTitle;
+                document.getElementById('appSubtitle').textContent = t.appSubtitle;
+                document.getElementById('passwordPrompt').textContent = t.passwordPrompt;
+                document.getElementById('password').placeholder = t.passwordPlaceholder;
+                document.getElementById('validatePassword').textContent = t.validateButton;
+                document.getElementById('inputText').placeholder = t.inputPlaceholder;
+                document.getElementById('encodeBtn').textContent = t.encodeButton;
+                document.getElementById('decodeBtn').textContent = t.decodeButton;
+                document.getElementById('outputText').placeholder = t.outputPlaceholder;
+                document.getElementById('footerText').textContent = t.footerText;
+                document.getElementById('welcomeTitle').textContent = t.welcomeTitle;
+                document.getElementById('welcomeMessage').textContent = t.welcomeMessage;
+                document.getElementById('dontShowLabel').textContent = t.dontShowLabel;
+                
+                // Mettre à jour le sélecteur de langue
+                languageSelector.value = currentLanguage;
+            }
+            
+            // Correspondance des symboles
+            const symbolMap = {
+                'A': '+', 'B': '#', 'C': '°', 'D': '√', 'E': '\\', 
+                'F': '™', 'G': ']', 'H': '÷', 'I': '?', 'J': '!', 
+                'K': '&', 'L': '^', 'M': '§', 'N': '¥', 'O': '∆', 
+                'P': '£', 'Q': '¢', 'R': '%', 'S': '~', 'T': '©', 
+                'U': '-', 'V': '•', 'W': '€', 'X': '®', 'Y': '✓', 'Z': '|'
+            };
+            
+            // Map inverse pour le décodage
+            const reverseSymbolMap = {};
+            for (const [letter, symbol] of Object.entries(symbolMap)) {
+                reverseSymbolMap[symbol] = letter;
+            }
+            
+            // Fonction pour calculer l'inverse modulaire
+            function modInverse(a, m) {
+                a = ((a % m) + m) % m;
+                for (let x = 1; x < m; x++) {
+                    if ((a * x) % m === 1) {
+                        return x;
+                    }
+                }
+                return null;
+            }
+            
+            // Fonction pour calculer les coefficients a et b à partir du mot de passe
+            function calculateCoefficients(password) {
+                // Convertir en majuscules et supprimer les espaces
+                const cleanPass = password.toUpperCase().replace(/\s+/g, '');
+                
+                if (cleanPass.length === 0) {
+                    return { a: 0, b: 0, valid: false };
+                }
+                
+                // Calcul de a (premier caractère valide)
+                let firstChar = '';
+                for (let char of cleanPass) {
+                    if ((char >= 'A' && char <= 'Z') || (char >= '0' && char <= '9')) {
+                        firstChar = char;
+                        break;
+                    }
+                }
+                
+                if (!firstChar) {
+                    return { a: 0, b: 0, valid: false };
+                }
+                
+                // Calcul de a
+                if (firstChar >= 'A' && firstChar <= 'Z') {
+                    a = firstChar.charCodeAt(0) - 65; // A=0, B=1, ..., Z=25
+                } else {
+                    a = parseInt(firstChar);
+                }
+                
+                // Calcul de b (somme de tous les caractères valides)
+                let sum = 0;
+                for (let char of cleanPass) {
+                    if (char >= 'A' && char <= 'Z') {
+                        sum += char.charCodeAt(0) - 65;
+                    } else if (char >= '0' && char <= '9') {
+                        sum += parseInt(char);
+                    }
+                }
+                
+                b = sum % 26;
+                
+                // Vérifier si a est inversible modulo 26
+                const inverse = modInverse(a, 26);
+                
+                return { 
+                    a, 
+                    b, 
+                    valid: inverse !== null,
+                    inverse: inverse
+                };
+            }
+            
+            // Fonction pour encoder un message
+            function encodeMessage(message) {
+                errorMessage.textContent = "";
+                let result = "";
+                
+                // Convertir en majuscules
+                const upperMessage = message.toUpperCase();
+                
+                for (let char of upperMessage) {
+                    if (char >= 'A' && char <= 'Z') {
+                        // Convertir en valeur numérique
+                        const x = char.charCodeAt(0) - 65;
+                        
+                        // Appliquer la fonction de congruence
+                        let y = (a * x + b) % 26;
+                        if (y < 0) y += 26;
+                        
+                        // Convertir en symbole
+                        const letter = String.fromCharCode(y + 65);
+                        result += symbolMap[letter];
+                    } else {
+                        // Conserver les caractères non alphabétiques
+                        result += char;
+                    }
+                }
+                
+                return result;
+            }
+            
+            // Fonction pour décoder un message
+            function decodeMessage(encodedMessage) {
+                errorMessage.textContent = "";
+                let result = "";
+                
+                // Calculer l'inverse modulaire
+                const inverse = modInverse(a, 26);
+                if (inverse === null) {
+                    errorMessage.textContent = translations[currentLanguage].errorNotInvertible;
+                    return "";
+                }
+                
+                for (let char of encodedMessage) {
+                    if (reverseSymbolMap[char]) {
+                        // Obtenir la lettre correspondant au symbole
+                        const symbolChar = reverseSymbolMap[char];
+                        
+                        // Convertir en valeur numérique
+                        const y = symbolChar.charCodeAt(0) - 65;
+                        
+                        // Appliquer la fonction inverse
+                        let x = (inverse * (y - b)) % 26;
+                        if (x < 0) x += 26;
+                        
+                        // Convertir en lettre
+                        result += String.fromCharCode(x + 65);
+                    } else {
+                        // Si le symbole n'est pas dans la table, le conserver tel quel
+                        result += char;
+                    }
+                }
+                
+                return result;
+            }
+            
+            // Événements
+            validateBtn.addEventListener('click', function() {
+                password = passwordInput.value;
+                
+                if (password.trim() === "") {
+                    errorMessage.textContent = translations[currentLanguage].errorEmptyPassword;
+                    return;
+                }
+                
+                // Calculer les coefficients
+                const coefficients = calculateCoefficients(password);
+                a = coefficients.a;
+                b = coefficients.b;
+                
+                // Vérifier si le coefficient a est inversible
+                if (!coefficients.valid) {
+                    errorMessage.textContent = translations[currentLanguage].errorNotInvertible;
+                    return;
+                }
+                
+                // Passer à l'écran suivant
+                passwordScreen.classList.remove('active');
+                messageScreen.classList.add('active');
+            });
+            
+            encodeBtn.addEventListener('click', function() {
+                outputText.value = encodeMessage(inputText.value);
+            });
+            
+            decodeBtn.addEventListener('click', function() {
+                outputText.value = decodeMessage(inputText.value);
+            });
+            
+            // Gestion du changement de langue
+            languageSelector.addEventListener('change', function() {
+                currentLanguage = this.value;
+                updateLanguage();
+            });
+            
+            // Initialisation
+            updateLanguage();
+        });
+    </script>
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
